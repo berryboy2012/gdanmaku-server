@@ -78,15 +78,22 @@ class Channel(object):
         return current_app.config.get("REDIS_PREFIX") + cls.CHANNEL_PREFIX
 
     def __init__(self, name, desc="Test", ttl=-1, sub_passwd="",
-                 pub_passwd=None, exam_passwd=None):
+                 pub_passwd=None, exam_passwd=None, calc_hash=True):
         self.name = name
         self.desc = desc
         self._ttl = ttl
-        self.sub_passwd = generate_password_hash(sub_passwd)
-        self.pub_passwd = generate_password_hash(pub_passwd) \
-            if pub_passwd else None
-        self.exam_passwd = generate_password_hash(exam_passwd) \
-            if exam_passwd else None
+
+        # don't calc hash when there's no need to
+        if calc_hash:
+            self.sub_passwd = generate_password_hash(sub_passwd)
+            self.pub_passwd = generate_password_hash(pub_passwd) \
+                if pub_passwd else None
+            self.exam_passwd = generate_password_hash(exam_passwd) \
+                if exam_passwd else None
+        else:
+            self.sub_passwd = None
+            self.pub_passwd = None
+            self.exam_passwd = None
 
 
     @property
@@ -99,6 +106,7 @@ class Channel(object):
 
     @staticmethod
     def from_json(jstr):
+        # use Channel() if you want to generate a new channel instead
         dchan = json.loads(jstr)
         if 'name' not in dchan:
             return None
@@ -108,7 +116,7 @@ class Channel(object):
         sub_passwd = dchan.get('sub_passwd', "")
         pub_passwd = dchan.get('pub_passwd', None)
         exam_passwd = dchan.get('exam_passwd', None)
-        c = Channel(name, desc, ttl=None)
+        c = Channel(name, desc, ttl=None, calc_hash=False)
         c.sub_passwd = sub_passwd
         c.pub_passwd = pub_passwd
         c.exam_passwd = exam_passwd

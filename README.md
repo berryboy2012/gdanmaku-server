@@ -150,7 +150,7 @@ Open your browser and visit <http://IP:port/>, you should see the danmaku web pa
 If you wanna run danmaku service as a daemon, use
 
 ```
-docker run -d --name danmaku --link redis:myredis -v /path/to/gdanmaku-server:/data/gdanmaku -p IP:Port:5000 danmaku:dev python3 gdanmaku/webserver.py
+docker run -d --name danmaku --link redis:myredis -p IP:Port:5000 danmaku:dev python3 gdanmaku/webserver.py
 ```
 If you want to use it in Wechat alone, please set `port` to 80, and open the firewall.
 

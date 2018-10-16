@@ -52,6 +52,7 @@ from . import webapi
 from . import wechat
 from . import telegram
 
+
 def main():
     http_server = WSGIServer(('0.0.0.0', 5000), app)
     print("Serving at 0.0.0.0:5000")
